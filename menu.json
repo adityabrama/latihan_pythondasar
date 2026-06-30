@@ -1,0 +1,12 @@
+{
+    "pricelist": {
+        "Ayam": 15000,
+        "Sapi": 12000,
+        "Babi": 10000
+    },
+    "diskon": {
+        "Ayam": {"min_kg": 5, "persen": 0.10},
+        "Sapi": {"min_kg": 2, "persen": 0.15},
+        "Babi": {"min_kg": 3, "persen": 0.12}
+    }
+}
