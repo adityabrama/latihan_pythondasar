@@ -1,0 +1,103 @@
+{% extends "base.html" %}
+
+{% block title %}Profil - {{ user.username }}{% endblock %}
+
+{% block body %}
+{% if from_admin %}
+<nav class="navbar">
+    <a href="/" class="brand">🔐 Login Page Trial</a>
+    <div class="nav-links">
+        <a href="/">← Kembali ke Dashboard</a>
+    </div>
+</nav>
+{% endif %}
+
+<div class="center-screen">
+    <div class="card card-wide">
+        <h1 class="gradient">Profil Saya</h1>
+        <p class="subtitle">Kelola informasi akun Anda</p>
+
+        {# Pesan sukses setelah update #}
+        {% if request.query_params.get('updated') %}
+        <div class="alert alert-success">✅ Profil berhasil diperbarui!</div>
+        {% endif %}
+
+        {# Pesan error upload foto / validasi #}
+        {% if photo_error %}
+        <div class="alert alert-error">⚠️ {{ photo_error }}</div>
+        {% endif %}
+
+        {# ── FOTO PROFIL ── #}
+        <div style="text-align:center; margin-bottom: 20px;">
+            {% if user.photo %}
+                <img class="avatar-lg" src="/static/uploads/{{ user.photo }}" alt="Foto Profil">
+            {% else %}
+                <div class="avatar-lg-fallback">👤</div>
+            {% endif %}
+            <p class="muted" style="margin-top:10px;">
+                @{{ user.username }}
+                {% if user.role == 'admin' %}
+                <span class="badge badge-admin" style="margin-left:6px;">ADMIN</span>
+                {% endif %}
+            </p>
+        </div>
+
+        {# ── UPLOAD FOTO (Update) ── #}
+        <div class="section-title">Upload Foto Profil</div>
+        {# enctype="multipart/form-data" WAJIB untuk upload file #}
+        <form action="/profile/{{ user.id }}/upload-photo"
+              method="post" enctype="multipart/form-data">
+            <div class="form-group">
+                <input class="file-input" type="file" name="photo" accept="image/*">
+            </div>
+            <button type="submit" class="btn btn-secondary">Upload Foto</button>
+        </form>
+
+        <hr class="divider">
+
+        {# ── EDIT PROFIL (Update) ── #}
+        <div class="section-title">Edit Informasi Profil</div>
+        <form action="/profile/{{ user.id }}/edit" method="post">
+            <div class="form-group">
+                <label>Nama Lengkap</label>
+                <input type="text" name="full_name"
+                       value="{{ user.full_name or '' }}"
+                       placeholder="Nama lengkap Anda">
+            </div>
+            <div class="form-group">
+                <label>Email</label>
+                <input type="email" name="email"
+                       value="{{ user.email }}" placeholder="Email Anda">
+            </div>
+            <button type="submit" class="btn btn-primary">Simpan Perubahan</button>
+        </form>
+
+        <hr class="divider">
+
+        {# ── INFO AKUN (Read) ── #}
+        <div class="section-title">Informasi Akun</div>
+        <div class="info-box">
+            <p><strong>Username:</strong> {{ user.username }}</p>
+            <p><strong>Email:</strong> {{ user.email }}</p>
+            <p><strong>Nama:</strong> {{ user.full_name or '-' }}</p>
+            <p><strong>Role:</strong> {{ user.role }}</p>
+            <p><strong>ID:</strong> #{{ user.id }}</p>
+        </div>
+
+        <hr class="divider">
+
+        {# ── LOGOUT & HAPUS AKUN (Delete) ── #}
+        {% if from_admin %}
+        <a href="/"><button type="button" class="btn btn-secondary">← Kembali ke Dashboard</button></a>
+        {% else %}
+        <a href="/logout"><button type="button" class="btn btn-secondary">Logout</button></a>
+        {% endif %}
+
+        <form action="/profile/{{ user.id }}/delete" method="post"
+              style="margin-top:8px;"
+              onsubmit="return confirm('Yakin ingin hapus akun? Tindakan ini tidak bisa dibatalkan!')">
+            <button type="submit" class="btn btn-danger">Hapus Akun</button>
+        </form>
+    </div>
+</div>
+{% endblock %}

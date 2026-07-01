@@ -1,0 +1,68 @@
+{% extends "base.html" %}
+
+{% block title %}Tambah User{% endblock %}
+
+{% block body %}
+<nav class="navbar">
+    <a href="/" class="brand">🔐 Login Page Trial</a>
+    <div class="nav-links">
+        <a href="/">← Kembali ke Dashboard</a>
+    </div>
+</nav>
+
+<div class="center-screen">
+    <div class="card">
+        <h1>Tambah User</h1>
+        <p class="subtitle">Buat akun user baru dari dashboard (operasi CREATE)</p>
+
+        {% if error %}
+        <div class="alert alert-error">⚠️ {{ error }}</div>
+        {% endif %}
+
+        {# form.xxx berisi nilai yang tadi diketik (kalau validasi gagal),
+           supaya user tidak perlu mengetik ulang dari awal. #}
+        <form action="/admin/create" method="post">
+            <div class="form-group">
+                <label for="username">Username</label>
+                <input type="text" id="username" name="username"
+                       value="{{ form.username if form else '' }}"
+                       placeholder="Minimal 3 karakter" required autofocus>
+            </div>
+
+            <div class="form-group">
+                <label for="email">Email</label>
+                <input type="email" id="email" name="email"
+                       value="{{ form.email if form else '' }}"
+                       placeholder="contoh@email.com" required>
+            </div>
+
+            <div class="form-group">
+                <label for="full_name">Nama Lengkap</label>
+                <input type="text" id="full_name" name="full_name"
+                       value="{{ form.full_name if form else '' }}"
+                       placeholder="Nama lengkap (opsional)">
+            </div>
+
+            <div class="form-group">
+                <label for="password">Password</label>
+                <input type="password" id="password" name="password"
+                       placeholder="Minimal 6 karakter" required>
+            </div>
+
+            <div class="form-group">
+                <label for="role">Role</label>
+                <select id="role" name="role">
+                    <option value="user"  {% if form and form.role == 'user' %}selected{% endif %}>User</option>
+                    <option value="admin" {% if form and form.role == 'admin' %}selected{% endif %}>Admin</option>
+                </select>
+            </div>
+
+            <button type="submit" class="btn btn-primary">Simpan User</button>
+        </form>
+
+        <div class="link-text">
+            <a href="/">Batal</a>
+        </div>
+    </div>
+</div>
+{% endblock %}

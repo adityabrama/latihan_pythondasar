@@ -1,0 +1,18 @@
+# Virtual environment
+.venv/
+venv/
+
+# Cache Python
+__pycache__/
+*.pyc
+
+# Database SQLite (data lokal, tidak perlu ikut ke git)
+data.db
+
+# Foto yang diupload user
+static/uploads/*
+!static/uploads/.gitkeep
+
+# File OS / editor
+.DS_Store
+.vscode/

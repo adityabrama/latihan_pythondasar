@@ -1,0 +1,107 @@
+{% extends "base.html" %}
+
+{% block title %}Dashboard Admin{% endblock %}
+
+{% block body %}
+{# ── Navbar ── #}
+<nav class="navbar">
+    <a href="/" class="brand">🔐 Login Page Trial</a>
+    <div class="nav-links">
+        <a href="/">Dashboard</a>
+        <a href="/register">Register</a>
+        <a href="/login">Login</a>
+    </div>
+</nav>
+
+<div class="page">
+    <h1 class="gradient">Dashboard Admin</h1>
+    <p class="subtitle">Kelola semua user: buat, lihat, ubah, dan hapus (CRUD).</p>
+
+    {# ── Flash message berdasarkan query param ──
+       Setiap operasi CRUD me-redirect ke sini dengan ?created / ?updated / ?deleted #}
+    {% if request.query_params.get('created') %}
+    <div class="alert alert-success">✅ User baru berhasil ditambahkan.</div>
+    {% elif request.query_params.get('updated') %}
+    <div class="alert alert-success">✅ Data user berhasil diperbarui.</div>
+    {% elif request.query_params.get('deleted') %}
+    <div class="alert alert-success">🗑️ User berhasil dihapus.</div>
+    {% endif %}
+
+    {# ── Toolbar: pencarian + tombol tambah ── #}
+    <div class="toolbar">
+        <form class="search-form" action="/" method="get">
+            <input type="text" name="q" value="{{ q }}"
+                   placeholder="Cari username atau email...">
+            <button type="submit" class="btn btn-secondary">Cari</button>
+        </form>
+        <a href="/admin/new" class="btn-add">+ Tambah User</a>
+    </div>
+
+    <p class="stat">Total user: <strong>{{ total }}</strong>
+        {% if q %} &nbsp;•&nbsp; hasil pencarian "<strong>{{ q }}</strong>": {{ users|length }}{% endif %}
+    </p>
+
+    {# ── Tabel semua user (READ) ── #}
+    <div class="table-wrap" style="margin-top:12px;">
+        <table>
+            <thead>
+                <tr>
+                    <th>ID</th>
+                    <th>User</th>
+                    <th>Email</th>
+                    <th>Role</th>
+                    <th>Aksi</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for user in users %}
+                <tr>
+                    <td class="muted">#{{ user.id }}</td>
+                    <td>
+                        <div class="actions">
+                            {% if user.photo %}
+                            <img class="avatar-sm" src="/static/uploads/{{ user.photo }}" alt="foto">
+                            {% else %}
+                            <span class="avatar-fallback">👤</span>
+                            {% endif %}
+                            <div>
+                                <div><strong>{{ user.username }}</strong></div>
+                                <div class="muted">{{ user.full_name or '-' }}</div>
+                            </div>
+                        </div>
+                    </td>
+                    <td>{{ user.email }}</td>
+                    <td>
+                        {% if user.role == 'admin' %}
+                        <span class="badge badge-admin">ADMIN</span>
+                        {% else %}
+                        <span class="badge badge-user">USER</span>
+                        {% endif %}
+                    </td>
+                    <td>
+                        <div class="actions">
+                            {# READ satu #}
+                            <a class="btn-sm btn-view" href="/admin/{{ user.id }}">Lihat</a>
+                            {# UPDATE #}
+                            <a class="btn-sm btn-edit" href="/admin/{{ user.id }}/edit">Edit</a>
+                            {# DELETE — pakai form POST + konfirmasi #}
+                            <form class="inline-form" action="/admin/{{ user.id }}/delete"
+                                  method="post"
+                                  onsubmit="return confirm('Yakin hapus user {{ user.username }}?')">
+                                <button type="submit" class="btn-sm btn-del">Hapus</button>
+                            </form>
+                        </div>
+                    </td>
+                </tr>
+                {% else %}
+                <tr>
+                    <td colspan="5" style="text-align:center; padding:30px;" class="muted">
+                        Belum ada user{% if q %} yang cocok dengan pencarian{% endif %}.
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+{% endblock %}
