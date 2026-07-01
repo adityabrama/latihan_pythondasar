@@ -1,4 +1,4 @@
 # latihan_pythondasar
 ```
-chat
+aku programmer sekarang
 ```
